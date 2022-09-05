@@ -1,4 +1,7 @@
 Telethon SQLAlchemy session
+
+Fork of original library in order to manage issues.
+
 ===========================
 
 A `Telethon`_ session storage implementation backed by `SQLAlchemy`_.
