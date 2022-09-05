@@ -11,6 +11,9 @@ from telethon.tl.types import InputPhoto, InputDocument, PeerUser, PeerChat, Pee
 if TYPE_CHECKING:
     from .sqlalchemy import AlchemySessionContainer
 
+import logging
+
+logger = logging.getLogger(__name__)
 
 class AlchemySession(MemorySession):
     def __init__(self, container: 'AlchemySessionContainer', session_id: str) -> None:
@@ -101,10 +104,14 @@ class AlchemySession(MemorySession):
         rows = self._entities_to_rows(tlo)
         if not rows:
             return
-
-        for row in rows:
-            self.db.merge(row)
-        self.save()
+        try:
+            for row in rows:
+                self.db.merge(row)
+            self.save()
+        except Exception as e:
+            logger.exception("Error happens during process entities.")
+            self.db.rollback()
+            logger.warning("Rollback.")
 
     def get_entity_rows_by_phone(self, key: str) -> Optional[Tuple[int, int]]:
         row = self._db_query(self.Entity,
