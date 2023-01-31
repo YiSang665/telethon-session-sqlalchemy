@@ -1,5 +1,6 @@
 from typing import Optional, Tuple, Any, Union, TYPE_CHECKING
 import datetime
+import logging
 
 from sqlalchemy import orm
 
@@ -15,10 +16,12 @@ from telethon.tl.types import (
     updates,
 )
 
-from .core import logger
 
 if TYPE_CHECKING:
     from .sqlalchemy import AlchemySessionContainer
+
+
+logger = logging.getLogger(__name__)
 
 
 class AlchemySession(MemorySession):

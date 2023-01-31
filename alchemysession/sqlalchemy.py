@@ -8,8 +8,8 @@ from sqlalchemy import (
 )
 import sqlalchemy as sql
 
-from .orm import AlchemySession
-from .core import AlchemyCoreSession, logger
+from .orm import AlchemySession, logger
+from .core import AlchemyCoreSession
 from .core_mysql import AlchemyMySQLCoreSession
 from .core_sqlite import AlchemySQLiteCoreSession
 from .core_postgres import AlchemyPostgresCoreSession

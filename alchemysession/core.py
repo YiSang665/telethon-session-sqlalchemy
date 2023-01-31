@@ -12,9 +12,6 @@ from telethon.tl.types import InputPhoto, InputDocument, PeerUser, PeerChat, Pee
 from .orm import AlchemySession
 
 
-logger = logging.getLogger(__name__)
-
-
 class AlchemyCoreSession(AlchemySession):
     def _load_session(self) -> None:
         t = self.Session.__table__
