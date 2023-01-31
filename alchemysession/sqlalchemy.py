@@ -2,11 +2,14 @@ from typing import Optional, Tuple, Any, Union
 
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm.scoping import scoped_session
-from sqlalchemy import Column, String, Integer, BigInteger, LargeBinary, orm, func, select, and_
+from sqlalchemy import (
+    Column, String, Integer, BigInteger, LargeBinary, inspect, orm, func,
+    select, and_,
+)
 import sqlalchemy as sql
 
 from .orm import AlchemySession
-from .core import AlchemyCoreSession
+from .core import AlchemyCoreSession, logger
 from .core_mysql import AlchemyMySQLCoreSession
 from .core_sqlite import AlchemySQLiteCoreSession
 from .core_postgres import AlchemyPostgresCoreSession
@@ -44,8 +47,8 @@ class AlchemySessionContainer:
             if not self.db:
                 raise ValueError("Can't manage tables without an ORM session.")
             table_base.metadata.bind = self.db_engine
-            if not self.db_engine.dialect.has_table(self.db_engine,
-                                                    self.Version.__tablename__):
+            inspector = inspect(self.db_engine)
+            if not inspector.has_table(self.Version.__tablename__):
                 table_base.metadata.create_all()
                 self.db.add(self.Version(version=LATEST_VERSION))
                 self.db.commit()
@@ -191,4 +194,10 @@ class AlchemySessionContainer:
 
     def save(self) -> None:
         if self.db:
-            self.db.commit()
+            try:
+                self.db.commit()
+            except Exception as e:
+                logger.exception("Error on db commit in telethon sqlalchemy.")
+                self.db.rollback()
+            finally:
+                self.db.close()

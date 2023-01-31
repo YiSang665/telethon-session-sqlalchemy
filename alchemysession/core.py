@@ -1,5 +1,6 @@
 from typing import Optional, Tuple, Any, Union
 import datetime
+import logging
 
 from sqlalchemy import and_, select
 
@@ -9,6 +10,9 @@ from telethon.crypto import AuthKey
 from telethon.tl.types import InputPhoto, InputDocument, PeerUser, PeerChat, PeerChannel, updates
 
 from .orm import AlchemySession
+
+
+logger = logging.getLogger(__name__)
 
 
 class AlchemyCoreSession(AlchemySession):
